@@ -7,7 +7,7 @@ services:
     ports:
       - "27017:27017"
     environment:
-      MONGO_INITDB_DATABASE: book_api
+      MONGO_INITDB_DATABASE: books_db
     volumes:
       - mongodb_data:/data/db
     networks:
@@ -22,7 +22,7 @@ services:
       - ./backend:/app/backend
     environment:
       - MONGODB_URL=mongodb://mongodb:27017
-      - DATABASE_NAME=book_api
+      - DATABASE_NAME=books_db
     depends_on:
       - mongodb
     networks:
