@@ -147,7 +147,6 @@ def migrate_initial_data():
         db.users.insert_one(
             {
                 "username": "admin",
-                "email": "admin@seekglobal.co",
                 "hashed_password": get_password_hash("admin123"),
                 "created_at": now,
             }
