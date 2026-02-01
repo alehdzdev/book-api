@@ -52,8 +52,8 @@ services:
     networks:
       - book_network
     command: uvicorn main:app --host 0.0.0.0 --port 8000 --workers 2 --timeout-keep-alive 30
-    expose:
-      - "8000"
+    ports:
+      - "8000:8000"
 
 volumes:
   mongodb_data:
