@@ -1,8 +1,10 @@
 from contextlib import asynccontextmanager
 
 # FastAPI
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
 
 # Local
 from auth.views import router as auth_router
@@ -39,14 +41,10 @@ app.include_router(auth_router, prefix=settings.API_V1_PREFIX)
 app.include_router(books_router, prefix=settings.API_V1_PREFIX)
 
 
-@app.get("/")
-async def root():
-    return {
-        "message": "Welcome to the Book Management System",
-        "version": "1.0.0",
-        "docs": "/docs",
-        "health": "/health",
-    }
+@app.get("/", response_class=HTMLResponse)
+async def root(request: Request):
+    templates = Jinja2Templates(directory="templates")
+    return templates.TemplateResponse("index.html", {"request": request})
 
 
 @app.get("/health")
