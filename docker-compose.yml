@@ -4,8 +4,8 @@ services:
   mongodb:
     image: mongo:7.0
     container_name: book_api_mongodb
-    ports:
-      - "27017:27017"
+    restart: unless-stopped
+    command: ["mongod", "--wiredTigerCacheSizeGB", "1.5"]
     env_file:
       - .env
     environment:
@@ -20,6 +20,7 @@ services:
   mongo_express:
     image: mongo-express:1.0.0
     container_name: book_api_mongo_express
+    restart: unless-stopped
     ports:
       - "8081:8081"
     env_file:
@@ -41,8 +42,7 @@ services:
   web:
     build: .
     container_name: book_api
-    ports:
-      - "8000:8000"
+    restart: unless-stopped
     volumes:
       - ./backend:/backend
     env_file:
@@ -51,7 +51,9 @@ services:
       - mongodb
     networks:
       - book_network
-    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --workers 2 --timeout-keep-alive 30
+    expose:
+      - "8000"
 
 volumes:
   mongodb_data:
