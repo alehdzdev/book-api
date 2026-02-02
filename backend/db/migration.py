@@ -1,12 +1,11 @@
 from datetime import datetime
 
 # Third Party
-from pymongo import MongoClient
+from pymongo import MongoClient, ReturnDocument
 
 # Local
 from auth.services import get_password_hash
 from config import settings
-
 
 MIGRATION_NAME = "0001_initial_books_and_admin"
 
@@ -20,7 +19,19 @@ def migrate_initial_data():
     client = MongoClient(settings.MONGODB_URL)
     db = client[settings.DATABASE_NAME]
 
-    if db.migrations.find_one({"name": MIGRATION_NAME}):
+    lock = db.migrations.find_one_and_update(
+        {"name": MIGRATION_NAME},
+        {
+            "$setOnInsert": {
+                "name": MIGRATION_NAME,
+                "executed_at": datetime.utcnow(),
+            }
+        },
+        upsert=True,
+        return_document=ReturnDocument.BEFORE,
+    )
+
+    if lock is not None:
         print(f"[migration] {MIGRATION_NAME} already executed, skipping")
         client.close()
         return
@@ -151,13 +162,6 @@ def migrate_initial_data():
                 "created_at": now,
             }
         )
-
-    db.migrations.insert_one(
-        {
-            "name": MIGRATION_NAME,
-            "executed_at": now,
-        }
-    )
 
     print(f"[migration] {MIGRATION_NAME} executed successfully")
     client.close()
