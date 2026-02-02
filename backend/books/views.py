@@ -1,7 +1,7 @@
 from typing import List
 
 # FastAPI
-from fastapi import APIRouter, HTTPException, status, Depends, Query, Path
+from fastapi import APIRouter, HTTPException, status, Depends, Query
 
 # Local
 from books.models import Book, BookCreate, BookUpdate, AveragePriceResponse
@@ -58,12 +58,12 @@ async def search_books(
 
 
 @router.get(
-    "/stats/average-price/{year}",
+    "/stats/average-price",
     response_model=AveragePriceResponse,
     dependencies=[Depends(get_current_user)],
 )
 async def get_average_price_by_year(
-    year: int = Path(..., ge=1000, le=9999, description="Año de publicación"),
+    year: int = Query(..., ge=1000, le=9999, description="Año de publicación"),
 ):
     result = BookService.get_average_price_by_year(year)
     return result
