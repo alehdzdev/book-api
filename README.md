@@ -2,6 +2,8 @@
 
 A RESTful API for managing books, built with **FastAPI** and **MongoDB**. This project includes authentication, book management, and basic statistical endpoints.
 
+[Live Demo](https://seek.alehdzdev.com/)
+
 ## 🚀 Features
 
 - **User Authentication**: Register and Login (JWT based).
